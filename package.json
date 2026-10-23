@@ -1,0 +1,25 @@
+{
+  "name": "team7-project-cypress",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "SWE 437 Team 7 - Cypress end-to-end testing demo (React + Vite login page)",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "test": "start-server-and-test dev http://localhost:5173 cy:run"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.2",
+    "cypress": "^15.21.1",
+    "start-server-and-test": "^3.0.13",
+    "vite": "^8.3.5"
+  }
+}
