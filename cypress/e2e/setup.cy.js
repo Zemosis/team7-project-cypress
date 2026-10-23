@@ -1,8 +1,8 @@
 // Person 2 (Trang) -- setup verification.
 //
 // A smoke test: it proves the project, the dev server and Cypress are all
-// wired together correctly. It does NOT prove the login page works; that is
-// what the specs in person3-basic-login.cy.js are for.
+// wired together correctly. It does NOT prove the login page works -- that is
+// what the login tests will cover.
 
 describe('Cypress setup', () => {
   it('opens the homepage', () => {
