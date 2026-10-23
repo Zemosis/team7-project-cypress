@@ -1,7 +1,0 @@
-{
-  "valid": { "email": "student@gmu.edu", "password": "cypress123" },
-  "alsoValid": { "email": "team7@gmu.edu", "password": "swe437" },
-  "wrongPassword": { "email": "student@gmu.edu", "password": "not-the-password" },
-  "unknownUser": { "email": "nobody@gmu.edu", "password": "cypress123" },
-  "malformedEmail": { "email": "student-at-gmu", "password": "cypress123" }
-}

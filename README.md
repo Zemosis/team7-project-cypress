@@ -148,30 +148,30 @@ team7-project-cypress/
 │   └── styles.css
 └── cypress/
     ├── e2e/
-    │   ├── setup.cy.js                 smoke test — proves the setup works
-    │   ├── person3-basic-login.cy.js   basic login tests
-    │   ├── person4-advanced.cy.js      edge cases, fixtures, async behavior
-    │   └── broken-on-purpose.cy.js     failing tests (skipped by default)
-    ├── fixtures/users.json             test data
+    │   └── setup.cy.js                 smoke test — proves the setup works
     └── support/
-        ├── commands.js                 cy.login() custom command
+        ├── commands.js                 add custom commands here
         └── e2e.js                      loaded before every spec
 ```
+
+New spec files go in `cypress/e2e/` and must end in `.cy.js` to be picked up.
 
 ---
 
 ## Who works where
 
-Each person owns their own spec file, so nobody edits the same file at the same
-time. Tests written as `it('...')` with no body show up in the runner as
-**pending** — that is the checklist of what is left to write.
+Each person writes their own spec file, so nobody edits the same file at the
+same time. Create your file in `cypress/e2e/` when you start.
 
-| Person | Role | Files |
+| Person | Role | Spec file to create |
 |---|---|---|
-| Tur-Erdene | Introduction, class materials, login page | `src/`, `README.md` |
-| Trang | Installation and setup | `cypress/e2e/setup.cy.js`, `cypress.config.js` |
-| Jusleen | Writing tests, assertions, execution | `cypress/e2e/person3-basic-login.cy.js` |
-| Syed | Advanced testing and debugging | `cypress/e2e/person4-advanced.cy.js`, `cypress/fixtures/` |
+| Tur-Erdene | Introduction, class materials, login page | `src/`, `README.md` (done) |
+| Trang | Installation and setup | `cypress/e2e/setup.cy.js` (done), `cypress.config.js` |
+| Jusleen | Writing tests, assertions, execution | `cypress/e2e/basic-login.cy.js` |
+| Syed | Advanced testing and debugging | `cypress/e2e/advanced.cy.js` |
+
+The login page is finished and ready to test against — see the behavior and
+selector tables above for everything it does.
 
 Suggested workflow:
 
@@ -188,21 +188,19 @@ git push -u origin jusleen/basic-tests
 
 ## Anatomy of a test
 
-From `person3-basic-login.cy.js`, following **Arrange–Act–Assert**:
+The smoke test in `setup.cy.js`, which is as small as a Cypress test gets:
 
 ```js
-it('logs in successfully with valid credentials', () => {
-  // Arrange
-  cy.get('[data-cy="email-input"]').type('student@gmu.edu')
-  cy.get('[data-cy="password-input"]').type('cypress123')
-
-  // Act
-  cy.get('[data-cy="login-button"]').click()
-
-  // Assert
-  cy.get('[data-cy="success-message"]').should('contain.text', 'Welcome back')
+describe('Cypress setup', () => {
+  it('opens the homepage', () => {
+    cy.visit('/')
+    cy.get('body').should('be.visible')
+  })
 })
 ```
+
+Real tests follow the same shape, structured as **Arrange–Act–Assert**: set up
+the inputs, act on the page, then assert on the result.
 
 | Code | Meaning |
 |---|---|
@@ -221,18 +219,18 @@ That is why there is no `sleep()` anywhere even though login takes 600 ms.
 
 ## Seeing a test fail
 
-`cypress/e2e/broken-on-purpose.cy.js` contains two failures, skipped by default
-so the suite stays green. To demo them, change `describe.skip` to `describe`
-and run `npm run cy:open`.
+Part of the presentation is showing what a failure looks like. Two kinds are
+worth demonstrating, and telling them apart is one of the most useful skills in
+automated testing:
 
-The two cases are different on purpose:
+1. **A wrong expectation** — assert on text the page does not show. Cypress
+   prints expected vs. actual. The *test* is wrong.
+2. **A bug in the app** — change something in `src/auth.js`, such as removing
+   the `.trim()` call or flipping a comparison, and watch a previously passing
+   test start failing. The *app* is wrong.
 
-1. **A wrong expectation** — the test looks for "Goodbye" when the page says
-   "Welcome back". Cypress prints expected vs. actual. The test is wrong.
-2. **A missing element** — the selector matches nothing, so the command times
-   out. The *test* is broken, not the app.
-
-Telling those apart is one of the most useful skills in automated testing.
+A third case looks like a failure but is neither: a selector that matches
+nothing times out after 4 seconds. That usually means the test is out of date.
 
 ### Restoring the working version
 
