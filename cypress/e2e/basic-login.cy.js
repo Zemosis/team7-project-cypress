@@ -39,4 +39,12 @@ describe('Login page', () => {
       cy.get('[data-cy="error-message"]').should('be.visible').and('have.text', error)
     })
   })
+
+  // Failing test
+  it('DEMO: fails on purpose (wrong expected text)', () => {
+    cy.get('[data-cy="email-input"]').type('student@gmu.edu')
+    cy.get('[data-cy="password-input"]').type('cypress123')
+    cy.get('[data-cy="login-button"]').click()
+    cy.get('[data-cy="success-message"]').should('contain.text', 'Goodbye') // wrong on purpose
+  })
 })
