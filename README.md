@@ -1,46 +1,32 @@
 # Cypress End-to-End Testing — SWE 437, Team 7
 
-A small React + Vite login page used as the demo application for our class
-presentation on **[Cypress](https://www.cypress.io/)**, and the Cypress test
-suite that exercises it.
+A small React + Vite login page and a **[Cypress](https://www.cypress.io/)**
+test suite that exercises it. Everything runs locally: no account, no API key,
+no server of our own.
 
-Everything here runs locally with two commands. No account, no API key, no
-server of our own.
+Cypress is an open-source JavaScript testing framework that runs **inside the
+browser**, alongside the app under test. This project demonstrates
+**end-to-end testing**: driving a real browser through a login flow and checking
+what the page says back.
 
 **Team:** Tur-Erdene Bekhtur · Trang Vu · Jusleen Khural · Syed Talha Shahab
 
 ---
 
-## What Cypress is and why we chose it
-
-Cypress is an open-source JavaScript testing framework that runs **inside the
-browser**, alongside the application under test. Where Selenium sends each
-command across the network to a WebDriver process, Cypress test code shares the
-page's own run loop. That architecture is what gives it automatic waiting,
-step-by-step time travel, and direct access to the running application.
-
-It covers end-to-end, component, API and accessibility testing. This project
-demonstrates **end-to-end testing**: driving a real browser through a real user
-flow — typing into a login form and checking what the page says back.
-
----
-
 ## Prerequisites
 
-| Requirement | Version used here | Check with |
+| Requirement | Version | Check with |
 |---|---|---|
-| Node.js | 25.x (18+ works) | `node -v` |
-| npm | 11.x | `npm -v` |
-
-Cypress is installed as a **dev dependency**, not a production one — the app
-does not need it to run, only the tests do.
+| Node.js | 20.19+ or 22.12+ | `node -v` |
+| npm | comes with Node | `npm -v` |
+| Git | any recent version | `git --version` |
 
 ---
 
 ## Quick start
 
 ```bash
-git clone <this-repo-url>
+git clone https://github.com/Zemosis/team7-project-cypress
 cd team7-project-cypress
 npm install          # installs React, Vite and Cypress
 ```
@@ -48,50 +34,32 @@ npm install          # installs React, Vite and Cypress
 Then, in **two terminals**:
 
 ```bash
-# terminal 1 — serve the app
+# terminal 1: serve the app
 npm run dev          # http://localhost:5173
 
-# terminal 2 — open the Cypress app
+# terminal 2: open the Cypress app
 npm run cy:open      # pick "E2E Testing", then a browser, then a spec
 ```
 
-Or run the whole suite headlessly in one command — it starts the dev server,
+Or run the whole suite headlessly in one command. It starts the dev server,
 runs every spec, and shuts the server down again:
 
 ```bash
 npm test
 ```
 
-### How this project was built from scratch
-
-Useful for the installation section of the presentation:
-
-```bash
-npm create vite@latest team7-project-cypress -- --template react
-cd team7-project-cypress
-npm install
-npm install cypress --save-dev    # install Cypress
-npx cypress verify                # confirm the binary is usable
-npx cypress open                  # Launchpad creates config + folders
-```
-
----
-
-## Scripts
-
 | Command | What it does |
 |---|---|
-| `npm run dev` | Start the Vite dev server on port 5173 |
+| `npm run dev` | Start the app on port 5173 |
 | `npm run cy:open` | Open the interactive Cypress app (time travel, live reload) |
-| `npm run cy:run` | Run all specs headlessly — the dev server must already be up |
-| `npm test` | Start the server, run all specs, stop the server |
-| `npm run build` | Production build |
+| `npm run cy:run` | Run all specs headlessly (the app must already be running) |
+| `npm test` | Start the app, run all specs, stop the app |
 
 ---
 
 ## The demo application
 
-A login form at `/` with deliberately simple, fully visible rules.
+A login form at `/` with deliberately simple rules.
 
 **Demo accounts**
 
@@ -110,15 +78,15 @@ A login form at `/` with deliberately simple, fully visible rules.
 | Valid demo account | `Welcome back, <name>!` |
 | Show / Hide button | Toggles the password between masked and plain text |
 
-The login call is delayed by 600 ms (`LOGIN_DELAY_MS` in `src/auth.js`) on
-purpose, so the page is genuinely asynchronous. That is what makes Cypress's
-automatic waiting worth demonstrating: the tests never call `sleep()`.
+Login is delayed by 600 ms on purpose (`LOGIN_DELAY_MS` in `src/auth.js`), so
+the page is genuinely asynchronous. The tests still never call `sleep()`:
+Cypress waits automatically.
 
 ### Test selectors
 
-Every element the tests touch carries a `data-cy` attribute. Cypress
+Every element the tests touch has a `data-cy` attribute. Cypress
 [recommends this](https://docs.cypress.io/app/core-concepts/best-practices#Selecting-Elements)
-because it survives CSS and copy changes that would break a class-based selector.
+because it keeps working when CSS classes or wording change.
 
 | Selector | Element |
 |---|---|
@@ -128,7 +96,7 @@ because it survives CSS and copy changes that would break a class-based selector
 | `[data-cy="password-input"]` | Password field |
 | `[data-cy="toggle-password"]` | Show / Hide button |
 | `[data-cy="login-button"]` | Submit button |
-| `[data-cy="loading-message"]` | Shown while the login call is in flight |
+| `[data-cy="loading-message"]` | Shown while login is in progress |
 | `[data-cy="error-message"]` | Validation and failure messages |
 | `[data-cy="success-message"]` | Successful login message |
 
@@ -138,57 +106,41 @@ because it survives CSS and copy changes that would break a class-based selector
 
 ```
 team7-project-cypress/
-├── cypress.config.js              Cypress config — baseUrl, spec pattern
-├── vite.config.js                 Vite config — port 5173
+├── cypress.config.js           Cypress config: baseUrl, spec pattern
+├── vite.config.js              Vite config: port 5173
 ├── src/
-│   ├── auth.js                    validateCredentials() — the logic under test
-│   ├── LoginPage.jsx              the login form
+│   ├── auth.js                 validateCredentials(): the logic under test
+│   ├── LoginPage.jsx           the login form
 │   ├── App.jsx
 │   ├── main.jsx
 │   └── styles.css
 └── cypress/
-    ├── e2e/
-    │   └── setup.cy.js                 smoke test — proves the setup works
+    ├── e2e/                    test files (specs)
+    │   ├── setup.cy.js
+    │   ├── basic-login.cy.js
+    │   └── advanced.cy.js
     └── support/
-        ├── commands.js                 add custom commands here
-        └── e2e.js                      loaded before every spec
+        ├── commands.js         add custom commands here
+        └── e2e.js              loaded before every spec
 ```
 
-New spec files go in `cypress/e2e/` and must end in `.cy.js` to be picked up.
+Cypress finds tests through `specPattern` in `cypress.config.js`: every file in
+`cypress/e2e/` whose name ends in `.cy.js` is a spec. A new file outside that
+folder, or without the `.cy.js` ending, is ignored.
 
 ---
 
-## Who works where
+## The example tests
 
-Each person writes their own spec file, so nobody edits the same file at the
-same time. Create your file in `cypress/e2e/` when you start.
+| Spec | What it shows |
+|---|---|
+| `setup.cy.js` | Smoke tests: the app loads and the login form renders. If these fail, the problem is the setup, not the app. |
+| `basic-login.cy.js` | A successful login with three assertions (loading message, welcome message, no error), then a data-driven loop over several bad logins. Includes one test that **fails on purpose** (`DEMO: fails on purpose`) so you can read a failure. |
+| `advanced.cy.js` | Controlling time with `cy.clock()` and `cy.tick()`: the login button stays disabled for exactly 600 ms, then the welcome message appears. |
 
-| Person | Role | Spec file to create |
-|---|---|---|
-| Tur-Erdene | Introduction, class materials, login page | `src/`, `README.md` (done) |
-| Trang | Installation and setup | `cypress/e2e/setup.cy.js` (done), `cypress.config.js` |
-| Jusleen | Writing tests, assertions, execution | `cypress/e2e/basic-login.cy.js` |
-| Syed | Advanced testing and debugging | `cypress/e2e/advanced.cy.js` |
+### Anatomy of a test
 
-The login page is finished and ready to test against — see the behavior and
-selector tables above for everything it does.
-
-Suggested workflow:
-
-```bash
-git checkout -b jusleen/basic-tests    # branch named after you
-# write your tests
-npm test                               # confirm they pass
-git add .
-git commit -m "test: add basic login tests"
-git push -u origin jusleen/basic-tests
-```
-
----
-
-## Anatomy of a test
-
-The smoke test in `setup.cy.js`, which is as small as a Cypress test gets:
+The smallest test in `setup.cy.js`:
 
 ```js
 describe('Cypress setup', () => {
@@ -199,7 +151,7 @@ describe('Cypress setup', () => {
 })
 ```
 
-Real tests follow the same shape, structured as **Arrange–Act–Assert**: set up
+Larger tests follow the same shape, structured as **Arrange–Act–Assert**: set up
 the inputs, act on the page, then assert on the result.
 
 | Code | Meaning |
@@ -207,56 +159,67 @@ the inputs, act on the page, then assert on the result.
 | `describe()` | Groups related tests |
 | `it()` | One individual test |
 | `beforeEach()` | Runs before every test in the group |
-| `cy.visit('/')` | Opens the app — relative, because `baseUrl` is set |
-| `cy.get(selector)` | Selects an element, retrying until it exists |
-| `.type()` / `.click()` | Act on the element |
-| `.should(...)` | Assertion — retried until it passes or times out |
+| `cy.visit('/')` | Opens the app (a relative path works because `baseUrl` is set) |
+| `cy.get(selector)` | Finds an element, retrying until it exists |
+| `.type()` / `.click()` | Acts on the element |
+| `.should(...)` | Assertion, retried until it passes or times out |
 
-Cypress retries `cy.get()` and `.should()` automatically for up to 4 seconds.
-That is why there is no `sleep()` anywhere even though login takes 600 ms.
+Cypress retries `cy.get()` and `.should()` for up to 4 seconds. That is why no
+test needs `sleep()` even though login takes 600 ms.
 
 ---
 
 ## Seeing a test fail
 
-Part of the presentation is showing what a failure looks like. Two kinds are
-worth demonstrating, and telling them apart is one of the most useful skills in
-automated testing:
+There are two kinds of failure, and telling them apart is one of the most useful
+skills in automated testing:
 
-1. **A wrong expectation** — assert on text the page does not show. Cypress
-   prints expected vs. actual. The *test* is wrong.
-2. **A bug in the app** — change something in `src/auth.js`, such as removing
-   the `.trim()` call or flipping a comparison, and watch a previously passing
-   test start failing. The *app* is wrong.
+1. **The test is wrong.** It asserts on text the page never shows. Cypress
+   prints expected vs. actual. The demo test in `basic-login.cy.js` is this
+   kind.
+2. **The app is wrong.** Change something in `src/auth.js`, such as removing a
+   `.trim()` call or flipping a comparison, and a test that used to pass starts
+   failing.
 
-A third case looks like a failure but is neither: a selector that matches
-nothing times out after 4 seconds. That usually means the test is out of date.
+A selector that matches nothing times out after 4 seconds. That usually means
+the test is out of date with the page, not that the app is broken.
 
 ### Restoring the working version
 
-After experimenting — breaking a test, injecting a bug into `src/auth.js`,
-whatever — this puts everything back:
+After experimenting, this discards all your local changes:
 
 ```bash
-git restore .            # discard all local changes
+git restore .
 ```
 
-If you have already committed something you want to undo:
+If you also made commits you want to throw away:
 
 ```bash
-git reset --hard origin/main
+git reset --hard origin/main     # deletes your local commits too
 ```
-
-Both are safe here: there is no uncommitted work worth keeping in a demo clone.
 
 ---
 
 ## Further reading
 
-- [Why Cypress?](https://docs.cypress.io/app/get-started/why-cypress) — architecture and key differences
+- [Why Cypress?](https://docs.cypress.io/app/get-started/why-cypress): architecture and key differences
 - [Install Cypress](https://docs.cypress.io/app/get-started/install-cypress)
 - [Writing your first test](https://docs.cypress.io/app/end-to-end-testing/writing-your-first-end-to-end-test)
-- [Choose a testing type](https://docs.cypress.io/app/core-concepts/testing-types) — E2E vs. component
-- [Retry-ability](https://docs.cypress.io/app/core-concepts/retry-ability) — how auto-waiting works
-- [Best practices](https://docs.cypress.io/app/core-concepts/best-practices) — including `data-*` selectors
+- [Choose a testing type](https://docs.cypress.io/app/core-concepts/testing-types): E2E vs. component
+- [Retry-ability](https://docs.cypress.io/app/core-concepts/retry-ability): how auto-waiting works
+- [Best practices](https://docs.cypress.io/app/core-concepts/best-practices): including `data-*` selectors
 - [Assertions reference](https://docs.cypress.io/app/references/assertions)
+
+<details>
+<summary>Recreating this project from scratch</summary>
+
+```bash
+npm create vite@latest team7-project-cypress -- --template react
+cd team7-project-cypress
+npm install
+npm install cypress --save-dev    # install Cypress as a dev dependency
+npx cypress verify                # confirm Cypress is usable
+npx cypress open                  # the Launchpad creates the config and folders
+```
+
+</details>
