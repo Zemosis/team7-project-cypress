@@ -4,6 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "description": "SWE 437 Team 7 - Cypress end-to-end testing demo (React + Vite login page)",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
